@@ -22,7 +22,7 @@ class Article(models.Model):
     '''Статья для перевода'''
     magazine_issue = models.ForeignKey(MagazineIssue)
     original_title = models.CharField(max_length=255)
-    author = models.CharField(max_length=100, blank=True)
+    authors = models.CharField(max_length=255, blank=True)
     url = models.URLField(max_length=255, blank=True)
     
     def __unicode__(self):
@@ -33,7 +33,8 @@ class EnglishParagraph(models.Model):
     '''Абзац английского текста'''
     article = models.ForeignKey(Article)
     text = models.TextField(blank=True)
-    translation = models.ForeignKey('TranslationHistory', null=True, blank=True)
+    translation = models.OneToOneField('TranslatedParagraph', null=True, blank=True)
+    number = models.PositiveSmallIntegerField()
     
     @property
     def words(self):
@@ -50,20 +51,13 @@ class EnglishParagraph(models.Model):
     def __unicode__(self):
         return self.text.lstrip()[:50]
 
-
-class TranslationHistory(models.Model):
-    '''Версия перевода абзаца'''
-    original_paragraph = models.ForeignKey(EnglishParagraph)
+        
+class TranslatedParagraph(models.Model):
+    '''Перевод абзаца'''
     text = models.TextField()
     author = models.ForeignKey(User)
     last_changed = models.DateTimeField(auto_now=True)
-    
-    def save(self, *args, **kwargs):
-        super(TranslationHistory, self).save(*args, **kwargs)
-        origin = self.original_paragraph
-        origin.translation = self
-        origin.save()
-    
+       
     @property
     def words(self):
         return len(self.text.split())

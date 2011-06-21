@@ -1,5 +1,6 @@
 # Django settings for minerva project.
 import os
+import sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -109,6 +110,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -120,6 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'reversion',
     'minerva.main',
 )
 
@@ -145,3 +148,5 @@ LOGGING = {
         },
     }
 }
+
+sys.path.append(os.path.join(SITE_ROOT, 'utils'))
