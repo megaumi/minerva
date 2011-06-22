@@ -2,7 +2,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
-from forms import ArticleForm
+from minerva.main.forms import ArticleForm
 from minerva.main.models import MagazineIssue, Article, EnglishParagraph
 
 

@@ -1,1 +1,4 @@
 minerva aims to be a collaborative translation service.
+
+Requirements:
+django-reversion==1.4
