@@ -10,12 +10,23 @@ def main(request):
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
-            form.save()
-            paragraphs = request.POST['text'].split('\n')
+            magazine_issue = form.cleaned_data['magazine_issue']
+            original_title = form.cleaned_data['original_title']
+            authors = form.cleaned_data['authors']
+            url = form.cleaned_data['url']
+            text = form.cleaned_data['text']
+            article = Article(
+                magazine_issue=magazine_issue,
+                original_title=original_title,
+                authors=authors,
+                url=url
+            )
+            article.save()
+            paragraphs = text.split('\n')
             i = 0
             for p in paragraphs:
                 if p.strip():
-                    ep = EnglishParagraph(article=form.instance, text=p, number=i)
+                    ep = EnglishParagraph(article=article, text=p, number=i)
                     ep.save()
                     i += 1
             return HttpResponse('OK')
