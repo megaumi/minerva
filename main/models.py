@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class MagazineIssue(models.Model):
-    '''Выпуск журнала'''
+    u'''Выпуск журнала'''
     number = models.PositiveIntegerField(unique=True)
     original_published_date = models.DateField(null=True, blank=True)
     original_pdf = models.FileField(upload_to='pdf', blank=True)
@@ -19,7 +19,7 @@ class MagazineIssue(models.Model):
 
     
 class Article(models.Model):
-    '''Статья для перевода'''
+    u'''Статья для перевода'''
     magazine_issue = models.ForeignKey(MagazineIssue)
     original_title = models.CharField(max_length=255)
     authors = models.CharField(max_length=255, blank=True)
@@ -30,7 +30,7 @@ class Article(models.Model):
 
 
 class EnglishParagraph(models.Model):
-    '''Абзац английского текста'''
+    u'''Абзац английского текста'''
     article = models.ForeignKey(Article)
     text = models.TextField(blank=True)
     translation = models.OneToOneField('TranslatedParagraph', null=True, blank=True)
@@ -53,7 +53,7 @@ class EnglishParagraph(models.Model):
 
         
 class TranslatedParagraph(models.Model):
-    '''Перевод абзаца'''
+    u'''Перевод абзаца'''
     text = models.TextField()
     author = models.ForeignKey(User)
     last_changed = models.DateTimeField(auto_now=True)

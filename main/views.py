@@ -1,12 +1,12 @@
-# Create your views here.
+# -*- coding: utf-8 -*-
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from minerva.main.forms import ArticleForm
 from minerva.main.models import MagazineIssue, Article, EnglishParagraph
 
-
-def main(request):
+def add_article(request):
+    u'''Интерфейс для добавления новых статей'''
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
@@ -32,5 +32,11 @@ def main(request):
             return HttpResponse('OK')
     else:
         form = ArticleForm()
-    rc = RequestContext(request, {'form': form})
-    return render_to_response('main.html', rc)
+    context = RequestContext(request, {'form': form})
+    return render_to_response('add_article.html', context)
+
+def translate_article(request, article_id):
+    u'''Страница для работы над статьёй'''
+    english_paragraphs = EnglishParagraph.objects.filter(article__id=article_id)
+    context = {'english_paragraphs': english_paragraphs}
+    return render_to_response('translate_article.html', context)
