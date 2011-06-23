@@ -33,8 +33,7 @@ class EnglishParagraph(models.Model):
     u'''Абзац английского текста'''
     article = models.ForeignKey(Article)
     text = models.TextField(blank=True)
-    translation = models.OneToOneField('TranslatedParagraph', null=True, blank=True)
-    number = models.PositiveSmallIntegerField()
+    position_in_article = models.PositiveSmallIntegerField()
     
     @property
     def words(self):
@@ -57,6 +56,7 @@ class TranslatedParagraph(models.Model):
     text = models.TextField()
     author = models.ForeignKey(User)
     last_changed = models.DateTimeField(auto_now=True)
+    english_paragraph = models.OneToOneField(EnglishParagraph, related_name='translation')
        
     @property
     def words(self):

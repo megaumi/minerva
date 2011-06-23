@@ -12,10 +12,15 @@ class ArticleForm(forms.ModelForm):
         i = 0
         for p in paragraphs:
             if p.strip():
-                ep = EnglishParagraph(article=article, text=p, number=i)
+                ep = EnglishParagraph(article=article, text=p, position_in_article=i)
                 ep.save()
                 i += 1
         return article        
 
     class Meta:
         model = Article
+
+class TranslatedParagraphForm(forms.ModelForm):
+    class Meta:
+        model = TranslatedParagraph
+        fields = ('text',)
