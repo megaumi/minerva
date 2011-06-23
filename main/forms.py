@@ -23,4 +23,4 @@ class ArticleForm(forms.ModelForm):
 class TranslatedParagraphForm(forms.ModelForm):
     class Meta:
         model = TranslatedParagraph
-        fields = ('text',)
+        #fields = ('text',)

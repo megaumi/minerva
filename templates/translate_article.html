@@ -6,6 +6,19 @@
 	<title>Без имени</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.18" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        function on_translation_submit(id) {
+            jQuery.ajax({
+                url: "/add_translation/",
+                type: "post",
+                data: $('#form'+id).serialize(),
+                success: function(){
+                    $('#translation'+id).append($('#form'+id+' textarea').val());
+                }
+            });
+        };
+    </script>
 </head>
 
 <body>
@@ -13,8 +26,15 @@
 	{% for dataset in data %}
         <tr>
         <td width=30%>{{ dataset.english_text }}</td>
-        <td width=30%>{{ dataset.current_translation }}</td>
-        <td>{{ dataset.new_translation_form.as_p }}</td>
+        <td width=30%><span id="translation{{ dataset.id }}">{{ dataset.current_translation }}</span></td>
+        <td>
+            <form action="/add_translation/" method="post" id="form{{ dataset.id }}">
+                {% csrf_token %}
+                {{ dataset.new_translation_form.as_p }}
+                <button type="button" onclick="on_translation_submit({{ dataset.id }})">Сохранить</button>
+                <input type="submit" value="Submit" />
+            </form>
+        </td>
         </tr>
     {% endfor %}
     </table>

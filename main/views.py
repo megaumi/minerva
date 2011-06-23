@@ -24,6 +24,7 @@ def translate_article(request, article_id):
     data = []
     for ep in english_paragraphs:
         dataset = {}
+        dataset['id'] = ep.position_in_article
         dataset['english_text'] = ep.text
         try:
             dataset['current_translation'] = ep.translation.text
@@ -35,5 +36,13 @@ def translate_article(request, article_id):
         )
         dataset['new_translation_form'] = TranslatedParagraphForm(instance=tp)
         data.append(dataset)
-    context = {'data': data}
+    context = RequestContext(request, {'data': data})
     return render_to_response('translate_article.html', context)
+
+def ajax_add_translation(request):
+    form = TranslatedParagraphForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return HttpResponse('OK')
+    else:
+        return HttpResponse(form.errors.values())
