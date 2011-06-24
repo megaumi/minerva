@@ -24,6 +24,7 @@ def translate_article(request, article_id):
     data = []
     for ep in english_paragraphs:
         dataset = {}
+        dataset['ep'] = ep
         dataset['id'] = ep.position_in_article
         dataset['english_text'] = ep.text
         try:

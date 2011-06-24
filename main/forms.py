@@ -21,6 +21,7 @@ class ArticleForm(forms.ModelForm):
         model = Article
 
 class TranslatedParagraphForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.Textarea, label='')
     class Meta:
         model = TranslatedParagraph
         #fields = ('text',)

@@ -22,6 +22,7 @@
 </head>
 
 <body>
+    {% load comments %}
     <table>
 	{% for dataset in data %}
         <tr>
@@ -34,6 +35,10 @@
                 <button type="button" onclick="on_translation_submit({{ dataset.id }})">Сохранить</button>
                 <input type="submit" value="Submit" />
             </form>
+        </td>
+        <td>
+            {% render_comment_list for dataset.ep %}
+            {% render_comment_form for dataset.ep %}
         </td>
         </tr>
     {% endfor %}
