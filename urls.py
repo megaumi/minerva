@@ -17,6 +17,6 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('main.views',
     url(r'^article/add/', 'add_article'),
-    url(r'^article/translate/(\d+)', 'translate_article'),
-    url(r'^add_translation/', 'ajax_add_translation'),
+    url(r'^article/translate/(\d+)/', 'translate_article'),
+    url(r'^add_translation/(\d+)/', 'ajax_add_translation'),
 )

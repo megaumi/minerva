@@ -9,12 +9,12 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript">
         function on_translation_submit(id) {
-            jQuery.ajax({
-                url: "/add_translation/",
+            $.ajax({
+                url: "/add_translation/"+id+"/",
                 type: "post",
                 data: $('#form'+id).serialize(),
                 success: function(){
-                    $('#translation'+id).append($('#form'+id+' textarea').val());
+                    $('#translation'+id).html($('#form'+id+' textarea').val());
                 }
             });
         };
@@ -26,14 +26,13 @@
     <table>
 	{% for dataset in data %}
         <tr>
-        <td width=30%>{{ dataset.english_text }}</td>
-        <td width=30%><span id="translation{{ dataset.id }}">{{ dataset.current_translation }}</span></td>
+        <td width=30%>{{ dataset.ep.text }}</td>
+        <td width=30%><span id="translation{{ dataset.ep.id }}">{{ dataset.ep.translation.text }}</span></td>
         <td>
-            <form action="/add_translation/" method="post" id="form{{ dataset.id }}">
+            <form id="form{{ dataset.ep.id }}">
                 {% csrf_token %}
                 {{ dataset.new_translation_form.as_p }}
-                <button type="button" onclick="on_translation_submit({{ dataset.id }})">Сохранить</button>
-                <input type="submit" value="Submit" />
+                <button type="button" onclick="on_translation_submit({{ dataset.ep.id }})">Сохранить</button>
             </form>
         </td>
         <td>

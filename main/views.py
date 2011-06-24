@@ -23,25 +23,24 @@ def translate_article(request, article_id):
     english_paragraphs = EnglishParagraph.objects.filter(article__id=article_id)
     data = []
     for ep in english_paragraphs:
-        dataset = {}
-        dataset['ep'] = ep
-        dataset['id'] = ep.position_in_article
-        dataset['english_text'] = ep.text
-        try:
-            dataset['current_translation'] = ep.translation.text
-        except TranslatedParagraph.DoesNotExist:
-            dataset['current_translation'] = ''
-        tp = TranslatedParagraph(
-            author=request.user,
-            english_paragraph=ep
-        )
-        dataset['new_translation_form'] = TranslatedParagraphForm(instance=tp)
+        dataset = {
+            'ep': ep,
+            'new_translation_form': TranslatedParagraphForm()
+        }
         data.append(dataset)
     context = RequestContext(request, {'data': data})
     return render_to_response('translate_article.html', context)
 
-def ajax_add_translation(request):
-    form = TranslatedParagraphForm(request.POST)
+def ajax_add_translation(request, english_paragraph_id):
+    ep = EnglishParagraph.objects.get(pk=english_paragraph_id)
+    try:
+        tp = ep.translation
+    except TranslatedParagraph.DoesNotExist:
+        tp = TranslatedParagraph(
+            author = request.user,
+            english_paragraph = ep
+        )
+    form = TranslatedParagraphForm(request.POST, instance=tp)
     if form.is_valid():
         form.save()
         return HttpResponse('OK')
