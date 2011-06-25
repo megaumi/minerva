@@ -32,9 +32,12 @@ def translate_article(request, article_id):
     return render_to_response('translate_article.html', context)
 
 def ajax_add_translation(request, english_paragraph_id):
+    u'''Добавляет новый перевод абзаца'''
     ep = EnglishParagraph.objects.get(pk=english_paragraph_id)
     try:
         tp = ep.translation
+        if tp.text == request.POST['text']:
+            return HttpResponse('Translation not changed')
     except TranslatedParagraph.DoesNotExist:
         tp = TranslatedParagraph(
             author = request.user,
@@ -45,4 +48,4 @@ def ajax_add_translation(request, english_paragraph_id):
         form.save()
         return HttpResponse('OK')
     else:
-        return HttpResponse(form.errors.values())
+        print form.errors.values()

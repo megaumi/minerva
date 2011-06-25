@@ -8,27 +8,57 @@
 	<meta name="generator" content="Geany 0.18" />
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript">
+    $(document).ready(function(){
+        $('.commentbox form').submit(function(e) {
+            alert("form submitted");
+          e.preventDefault();
+          return false;
+        });
+        $('.commentbox form input[type=submit]').click(function(e) {
+          e.preventDefault();
+        
+          $.post($(this).parent().attr('action'), $(this).parent().serialize(), function(data) {
+            alert('The AJAX is done, and the server said ' + data);
+          });
+        });
+    });
         function on_translation_submit(id) {
             $.ajax({
                 url: "/add_translation/"+id+"/",
                 type: "post",
                 data: $('#form'+id).serialize(),
-                success: function(){
+                success: function(data){
                     $('#translation'+id).html($('#form'+id+' textarea').val());
+                    alert('The AJAX is done, and the server said ' + data);
                 }
             });
         };
+
     </script>
+    <style type="text/css">
+        body
+        {
+        font-family:"verdana","helvetica";
+        font-size:11px;
+        }
+        td
+        {
+        border-top:1px solid #999999;    
+        }
+    </style>
 </head>
 
 <body>
     {% load comments %}
-    <table>
+    <table align="center" width=75%>
+        <th>Оригинал</th>
+        <th>Перевод</th>
+        <th>Комментарии</th>
 	{% for dataset in data %}
         <tr>
         <td width=30%>{{ dataset.ep.text }}</td>
-        <td width=30%><span id="translation{{ dataset.ep.id }}">{{ dataset.ep.translation.text }}</span></td>
-        <td>
+        <td width=30%>
+            <span id="translation{{ dataset.ep.id }}">{{ dataset.ep.translation.text }}</span>
             <form id="form{{ dataset.ep.id }}">
                 {% csrf_token %}
                 {{ dataset.new_translation_form.as_p }}
@@ -36,8 +66,27 @@
             </form>
         </td>
         <td>
-            {% render_comment_list for dataset.ep %}
-            {% render_comment_form for dataset.ep %}
+            {% render_comment_list for dataset.ep %}            
+            {% get_comment_form for dataset.ep as form %}
+            <div class="commentbox">
+              <form id="commentform{{ dataset.ep.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
+                  {% for field in form %}
+                    {% if field.is_hidden %}
+                      <div>{{ field }}</div>
+                    {% else %}
+                      {% if field.errors %}{{ field.errors }}{% endif %}
+                      <p
+                        {% if field.errors %} class="error"{% endif %}
+                        {% ifequal field.name "honeypot" %} style="display:none;"{% endifequal %}>
+                        {% if field.name != 'email' and field.name != 'url' and field.name != 'name' %} 
+                            {{ field }}
+                        {% endif %}
+                      </p>
+                    {% endif %}
+                  {% endfor %}
+                  <input type="submit" name="post" value="Сохранить" />
+              </form>
+            </div>
         </td>
         </tr>
     {% endfor %}
