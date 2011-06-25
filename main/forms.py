@@ -8,7 +8,7 @@ class ArticleForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         article = super(ArticleForm, self).save(*args, **kwargs)
         text = self.cleaned_data['text']
-        paragraphs = text.split('\n')
+        paragraphs = text.split('\n\r')
         i = 0
         for p in paragraphs:
             if p.strip():
