@@ -1,5 +1,8 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
+from django.views.generic.detail import DetailView
+from main.views import ArticleCreateView
+from main.models import Article
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -17,6 +20,7 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('main.views',
     url(r'^article/add/', 'add_article'),
-    url(r'^article/translate/(\d+)/', 'translate_article'),
+    #url(r'^article/add/', ArticleCreateView.as_view(template_name="add_article.html")),
+    url(r'^article/translate/(?P<article_id>\d+)/', 'translate_article'),
     url(r'^add_translation/(\d+)/', 'ajax_add_translation'),
 )
