@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
+import reversion
 
 
 class MagazineIssue(models.Model):
@@ -72,3 +73,5 @@ class TranslatedParagraph(models.Model):
     
     def __unicode__(self):
         return self.text.lstrip()[:50]
+
+reversion.register(TranslatedParagraph)

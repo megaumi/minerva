@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView
+from reversion.helpers import generate_patch_html
+from reversion.revisions import Version
 from minerva.main.forms import ArticleForm, TranslatedParagraphForm
 from minerva.main.models import MagazineIssue, Article, EnglishParagraph, TranslatedParagraph
 
@@ -43,10 +46,11 @@ def translate_article(request, article_id):
     english_paragraphs = EnglishParagraph.objects.filter(article__id=article_id)
     data = []
     for english_p in english_paragraphs:
-        dataset = {
-            'english_p': english_p,
-            'translation': english_p.translation,
-        }
+        dataset = {'english_p': english_p}
+        try:
+            dataset['translation'] = english_p.translation
+        except TranslatedParagraph.DoesNotExist:
+            dataset['translation'] = ''
         data.append(dataset)
     context = RequestContext(request, {
         'data': data,
@@ -78,4 +82,19 @@ def ajax_get_comments(request, ep_id):
     u'''Отображает список комментариев для абзаца'''
     ep = EnglishParagraph.objects.get(pk=ep_id)
     return render_to_response('comments/comment_list.html', {'ep': ep})
+    
+def get_translation_history(request, translation_id):
+    translation = get_object_or_404(TranslatedParagraph, pk=translation_id)
+    available_versions = Version.objects.get_for_object(translation)
+    print len(available_versions)
+    history = []
+    for i, v in enumerate(available_versions):
+        if not i == 0:
+            dataset = {
+                'author': User.objects.get(pk=v.get_field_dict()['author']),
+                'date': v.get_field_dict()['last_changed'],
+                'html_patch': generate_patch_html(available_versions[i-1], v, "text")
+            }
+            history.append(dataset)
+    return render_to_response('translation_history.html', {'history': history})
     

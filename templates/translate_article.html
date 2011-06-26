@@ -19,7 +19,7 @@
             id = $(this).attr('id');
         
             $.post($(this).parent().attr('action'), $(this).parent().serialize(), function(data) {
-                alert('The AJAX is done, and the server said ' + data);
+                //alert('The AJAX is done, and the server said ' + data);
                 $('#commentlist'+id).load('/get_comments/'+id+'/');
             });
         });
@@ -31,7 +31,7 @@
             data: $('#form'+id).serialize(),
             success: function(data){
                 $('#translation'+id).html($('#form'+id+' textarea').val());
-                alert('The AJAX is done, and the server said ' + data);
+                //alert('The AJAX is done, and the server said ' + data);
             }
         });
     };
@@ -60,6 +60,7 @@
         <td width=30%>{{ dataset.english_p.text }}</td>
         <td width=30%>
             <span id="translation{{ dataset.english_p.id }}">
+                <p>{{ dataset.translation.id }}</p>
                 <p>{{ dataset.translation.text }}</p>
                 <p><b>{{ dataset.translation.author }}</b> - {{ dataset.translation.last_changed }}</p>
             </span>

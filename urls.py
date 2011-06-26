@@ -23,6 +23,7 @@ urlpatterns += patterns('main.views',
     url(r'^article/translate/(?P<article_id>\d+)/', 'translate_article'),
     url(r'^add_translation/(\d+)/', 'ajax_add_translation'),
     url(r'^get_comments/(\d+)/', 'ajax_get_comments'),
+    url(r'^translation_history/(\d+)/', 'get_translation_history'),
 )
 
 
