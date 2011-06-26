@@ -16,9 +16,11 @@
         });
         $('.commentbox form input[type=submit]').click(function(e) {
           e.preventDefault();
+          id = $(this).attr('id');
         
           $.post($(this).parent().attr('action'), $(this).parent().serialize(), function(data) {
             alert('The AJAX is done, and the server said ' + data);
+            $('#commentlist'+id).load('/get_comments/'+id+'/');
           });
         });
     });
@@ -66,7 +68,7 @@
             </form>
         </td>
         <td>
-            {% render_comment_list for dataset.ep %}            
+            <span id="commentlist{{ dataset.ep.id }}">{% render_comment_list for dataset.ep %}</span>
             {% get_comment_form for dataset.ep as form %}
             <div class="commentbox">
               <form id="commentform{{ dataset.ep.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
@@ -84,7 +86,7 @@
                       </p>
                     {% endif %}
                   {% endfor %}
-                  <input type="submit" name="post" value="Сохранить" />
+                  <input type="submit" name="post" value="Сохранить" id="{{ dataset.ep.id }}"/>
               </form>
             </div>
         </td>

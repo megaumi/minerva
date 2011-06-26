@@ -59,3 +59,9 @@ def ajax_add_translation(request, english_paragraph_id):
         return HttpResponse('OK')
     else:
         print form.errors.values()
+        
+def ajax_get_comments(request, ep_id):
+    u'''Отображает список комментариев для абзаца'''
+    ep = EnglishParagraph.objects.get(pk=ep_id)
+    return render_to_response('comments/comment_list.html', {'ep': ep})
+    

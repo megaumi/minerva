@@ -20,7 +20,12 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('main.views',
     url(r'^article/add/', 'add_article'),
-    #url(r'^article/add/', ArticleCreateView.as_view(template_name="add_article.html")),
     url(r'^article/translate/(?P<article_id>\d+)/', 'translate_article'),
     url(r'^add_translation/(\d+)/', 'ajax_add_translation'),
+    url(r'^get_comments/(\d+)/', 'ajax_get_comments'),
 )
+
+
+#urlpatterns += patterns('',
+    #url(r'^article/add/', ArticleCreateView.as_view(template_name="add_article.html")),
+#)
