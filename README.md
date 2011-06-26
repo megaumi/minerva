@@ -1,14 +1,12 @@
 minerva aims to be a collaborative translation service.
--------------------------------------------------------
 
-Requirements:
-=============
+###Requirements:
+
 django-reversion==1.4
 
-Installation:
-=============
+###Installation:
 1. Make sure you have a database configured
-2. python manage.py syncdb
-3. python manage.py createinitialrevisions
+2. ``python manage.py syncdb``
+3. ``python manage.py createinitialrevisions``
 4. That's all!
 
