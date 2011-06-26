@@ -1,8 +1,9 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.views.generic.detail import DetailView
-from main.views import ArticleCreateView
-from main.models import Article
+from django.views.generic import ListView
+from main.views import ArticleCreateView, ArticleListView, IssueListView
+from main.models import Article, MagazineIssue
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -19,11 +20,14 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('main.views',
-    url(r'^article/add/', 'add_article'),
-    url(r'^article/translate/(?P<article_id>\d+)/', 'translate_article'),
-    url(r'^add_translation/(\d+)/', 'ajax_add_translation'),
-    url(r'^get_comments/(\d+)/', 'ajax_get_comments'),
-    url(r'^translation_history/(\d+)/', 'get_translation_history'),
+    #url(r'^$', 'home'),
+    url(r'^issues/$', IssueListView.as_view()),
+    url(r'^articles/(\d+)/$', ArticleListView.as_view()),
+    url(r'^article/add/$', 'add_article'),
+    url(r'^article/translate/(?P<article_id>\d+)/$', 'translate_article'),
+    url(r'^add_translation/(\d+)/$', 'ajax_add_translation'),
+    url(r'^get_comments/(\d+)/$', 'ajax_get_comments'),
+    url(r'^translation_history/(\d+)/$', 'get_translation_history'),
 )
 
 

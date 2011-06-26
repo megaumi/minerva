@@ -9,13 +9,11 @@
 </head>
 
 <body>
-	{% if history %}
-        {% for dataset in history %}
-            <p>{{ dataset.html_patch|safe }}</p>
-            <p><b>{{ dataset.author}} </b> - {{ dataset.date }}</p>
-        {% endfor %}
-    {% else %}
+    {% for dataset in history %}
+        <p>{{ dataset.html_patch|safe }}</p>
+        <p><b>{{ dataset.author}} </b> - {{ dataset.date }}</p>
+    {% empty %}
         Для этого абзаца нет истории перевода.
-    {% endif %}
+    {% endfor %}
 </body>
 </html>

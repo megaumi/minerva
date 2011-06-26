@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from reversion.helpers import generate_patch_html
 from reversion.revisions import Version
 from minerva.main.forms import ArticleForm, TranslatedParagraphForm
@@ -23,7 +23,25 @@ class ArticleCreateView(CreateView):
             current_app='minerva.main'
         )
       
-
+class ArticleListView(ListView):
+    u'''Список статей заданного выпуска'''
+    model = Article
+    template_name = "articles_list.html"
+    context_object_name = "articles_list"
+    def get_queryset(self):
+        self.issue = get_object_or_404(MagazineIssue, number__exact=self.args[0])
+        return Article.objects.filter(magazine_issue=self.issue)
+    def get_context_data(self, **kwargs):
+        context = super(ArticleListView, self).get_context_data(**kwargs)
+        context['issue'] = self.issue
+        return context
+        
+class IssueListView(ListView):
+    u'''Список всех выпусков журнала'''
+    model = MagazineIssue
+    template_name = "issues_list.html"
+    context_object_name = "issues_list"
+    
 def add_article(request):
     u'''Интерфейс для добавления новых статей'''
     if request.method == 'POST':

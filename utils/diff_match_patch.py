@@ -44,7 +44,7 @@ class diff_match_patch:
     """
 
     # Number of seconds to map a diff before giving up (0 for infinity).
-    self.Diff_Timeout = 1.0
+    self.Diff_Timeout = 0.006
     # Cost of an empty edit operation in terms of edit characters.
     self.Diff_EditCost = 4
     # At what point is no match declared (0.0 = perfection, 1.0 = very loose).
