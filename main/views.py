@@ -7,12 +7,18 @@ from django.views.generic import CreateView
 from minerva.main.forms import ArticleForm, TranslatedParagraphForm
 from minerva.main.models import MagazineIssue, Article, EnglishParagraph, TranslatedParagraph
 
+# Не используется
+# При использовании выдаёт exception NoReverseMatch
 class ArticleCreateView(CreateView):
-   u'''Интерфейс для добавления новых статей'''
-   model = Article
-   form_class = ArticleForm
-   def get_success_url(self):
-       return reverse(translate_article, kwargs={'article_id': self.object.id}, current_app='minerva.main')
+    u'''Интерфейс для добавления новых статей'''
+    model = Article
+    form_class = ArticleForm
+    def get_success_url(self):
+        return reverse(
+            translate_article,
+            kwargs={'article_id': self.object.id},
+            current_app='minerva.main'
+        )
       
 
 def add_article(request):
@@ -21,7 +27,11 @@ def add_article(request):
         form = ArticleForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse(translate_article, kwargs={'article_id': form.instance.id}, current_app='minerva.main'))
+            return HttpResponseRedirect(reverse(
+                translate_article,
+                kwargs={'article_id': form.instance.id},
+                current_app='minerva.main'
+            ))
     else:
         form = ArticleForm()
     context = RequestContext(request, {'form': form})
@@ -32,13 +42,17 @@ def translate_article(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     english_paragraphs = EnglishParagraph.objects.filter(article__id=article_id)
     data = []
-    for ep in english_paragraphs:
+    for english_p in english_paragraphs:
         dataset = {
-            'ep': ep,
-            'new_translation_form': TranslatedParagraphForm()
+            'english_p': english_p,
+            'translation': english_p.translation,
         }
         data.append(dataset)
-    context = RequestContext(request, {'data': data, 'title': article.original_title})
+    context = RequestContext(request, {
+        'data': data,
+        'title': article.original_title,
+        'new_translation_form': TranslatedParagraphForm()
+    })
     return render_to_response('translate_article.html', context)
 
 def ajax_add_translation(request, english_paragraph_id):

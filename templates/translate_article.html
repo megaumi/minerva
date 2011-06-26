@@ -11,31 +11,30 @@
     $(document).ready(function(){
         $('.commentbox form').submit(function(e) {
             alert("form submitted");
-          e.preventDefault();
-          return false;
+            e.preventDefault();
+            return false;
         });
         $('.commentbox form input[type=submit]').click(function(e) {
-          e.preventDefault();
-          id = $(this).attr('id');
+            e.preventDefault();
+            id = $(this).attr('id');
         
-          $.post($(this).parent().attr('action'), $(this).parent().serialize(), function(data) {
-            alert('The AJAX is done, and the server said ' + data);
-            $('#commentlist'+id).load('/get_comments/'+id+'/');
-          });
+            $.post($(this).parent().attr('action'), $(this).parent().serialize(), function(data) {
+                alert('The AJAX is done, and the server said ' + data);
+                $('#commentlist'+id).load('/get_comments/'+id+'/');
+            });
         });
     });
-        function on_translation_submit(id) {
-            $.ajax({
-                url: "/add_translation/"+id+"/",
-                type: "post",
-                data: $('#form'+id).serialize(),
-                success: function(data){
-                    $('#translation'+id).html($('#form'+id+' textarea').val());
-                    alert('The AJAX is done, and the server said ' + data);
-                }
-            });
-        };
-
+    function on_translation_submit(id) {
+        $.ajax({
+            url: "/add_translation/"+id+"/",
+            type: "post",
+            data: $('#form'+id).serialize(),
+            success: function(data){
+                $('#translation'+id).html($('#form'+id+' textarea').val());
+                alert('The AJAX is done, and the server said ' + data);
+            }
+        });
+    };
     </script>
     <style type="text/css">
         body
@@ -58,20 +57,23 @@
         <th>Комментарии</th>
 	{% for dataset in data %}
         <tr>
-        <td width=30%>{{ dataset.ep.text }}</td>
+        <td width=30%>{{ dataset.english_p.text }}</td>
         <td width=30%>
-            <span id="translation{{ dataset.ep.id }}">{{ dataset.ep.translation.text }}</span>
-            <form id="form{{ dataset.ep.id }}">
+            <span id="translation{{ dataset.english_p.id }}">
+                <p>{{ dataset.translation.text }}</p>
+                <p><b>{{ dataset.translation.author }}</b> - {{ dataset.translation.last_changed }}</p>
+            </span>
+            <form id="form{{ dataset.english_p.id }}">
                 {% csrf_token %}
-                {{ dataset.new_translation_form.as_p }}
-                <button type="button" onclick="on_translation_submit({{ dataset.ep.id }})">Сохранить</button>
+                {{ new_translation_form.as_p }}
+                <button type="button" onclick="on_translation_submit({{ dataset.english_p.id }})">Сохранить</button>
             </form>
         </td>
         <td>
-            <span id="commentlist{{ dataset.ep.id }}">{% render_comment_list for dataset.ep %}</span>
-            {% get_comment_form for dataset.ep as form %}
+            <span id="commentlist{{ dataset.english_p.id }}">{% render_comment_list for dataset.english_p %}</span>
+            {% get_comment_form for dataset.english_p as form %}
             <div class="commentbox">
-              <form id="commentform{{ dataset.ep.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
+              <form id="commentform{{ dataset.english_p.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
                   {% for field in form %}
                     {% if field.is_hidden %}
                       <div>{{ field }}</div>
@@ -86,7 +88,7 @@
                       </p>
                     {% endif %}
                   {% endfor %}
-                  <input type="submit" name="post" value="Сохранить" id="{{ dataset.ep.id }}"/>
+                  <input type="submit" name="post" value="Сохранить" id="{{ dataset.english_p.id }}"/>
               </form>
             </div>
         </td>
