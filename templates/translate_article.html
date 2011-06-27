@@ -51,30 +51,47 @@
 
 <body>
     {% load comments %}
+    <div class="pagination">
+    <span class="step-links">
+            {% if data.has_previous %}
+                <a href="?page={{ data.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ data.number }} of {{ data.paginator.num_pages }}.
+            </span>
+    
+            {% if data.has_next %}
+                <a href="?page={{ data.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
     <table align="center" width=75%>
         <th>Оригинал</th>
         <th>Перевод</th>
         <th>Комментарии</th>
-	{% for dataset in data %}
+	{% for english_p in data.object_list %}
         <tr>
-        <td width=30%>{{ dataset.english_p.text }}</td>
+        <td width=30%>{{ english_p.text }}</td>
         <td width=30%>
-            <span id="translation{{ dataset.english_p.id }}">
-                <p>{{ dataset.translation.id }}</p>
-                <p>{{ dataset.translation.text }}</p>
-                <p><b>{{ dataset.translation.author }}</b> - {{ dataset.translation.last_changed }}</p>
+            <span id="translation{{ english_p.id }}">
+                {% if english_p.translation %}
+                    <p>{{ english_p.translation.id }}</p>
+                    <p>{{ english_p.translation.text }}</p>
+                    <p><b>{{ english_p.translation.author }}</b> - {{ english_p.translation.last_changed }}</p>
+                {% endif %}
             </span>
-            <form id="form{{ dataset.english_p.id }}">
+            <form id="form{{ english_p.id }}">
                 {% csrf_token %}
                 {{ new_translation_form.as_p }}
-                <button type="button" onclick="on_translation_submit({{ dataset.english_p.id }})">Сохранить</button>
+                <button type="button" onclick="on_translation_submit({{ english_p.id }})">Сохранить</button>
             </form>
         </td>
         <td>
-            <span id="commentlist{{ dataset.english_p.id }}">{% render_comment_list for dataset.english_p %}</span>
-            {% get_comment_form for dataset.english_p as form %}
+            <span id="commentlist{{ english_p.id }}">{% render_comment_list for english_p %}</span>
+            {% get_comment_form for english_p as form %}
             <div class="commentbox">
-              <form id="commentform{{ dataset.english_p.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
+              <form id="commentform{{ english_p.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
                   {% for field in form %}
                     {% if field.is_hidden %}
                       <div>{{ field }}</div>
@@ -89,7 +106,7 @@
                       </p>
                     {% endif %}
                   {% endfor %}
-                  <input type="submit" name="post" value="Сохранить" id="{{ dataset.english_p.id }}"/>
+                  <input type="submit" name="post" value="Сохранить" id="{{ english_p.id }}"/>
               </form>
             </div>
         </td>

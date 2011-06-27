@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView, ListView
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from reversion.helpers import generate_patch_html
 from reversion.revisions import Version
 from minerva.main.forms import ArticleForm, TranslatedParagraphForm
@@ -62,14 +63,15 @@ def translate_article(request, article_id):
     u'''Страница для работы над статьёй'''
     article = get_object_or_404(Article, pk=article_id)
     english_paragraphs = EnglishParagraph.objects.filter(article__id=article_id)
-    data = []
-    for english_p in english_paragraphs:
-        dataset = {'english_p': english_p}
-        try:
-            dataset['translation'] = english_p.translation
-        except TranslatedParagraph.DoesNotExist:
-            dataset['translation'] = ''
-        data.append(dataset)
+    paginator = Paginator(english_paragraphs, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        data = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        data = paginator.page(paginator.num_pages)
     context = RequestContext(request, {
         'data': data,
         'title': article.original_title,
