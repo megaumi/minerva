@@ -4,6 +4,19 @@ from django.contrib.auth.models import User
 import reversion
 
 
+class UserProfile(models.Model):
+    u'''Профиль пользователя'''
+    user = models.OneToOneField(User)
+    is_translator = models.BooleanField()
+    is_proofreader = models.BooleanField()
+    is_designer = models.BooleanField()
+    
+def create_profile(sender, **kwargs):
+    if kwargs['created']:
+        UserProfile.objects.create(user=kwargs['instance'])
+models.signals.post_save.connect(create_profile, sender=User)
+
+
 class MagazineIssue(models.Model):
     u'''Выпуск журнала'''
     number = models.PositiveIntegerField(unique=True)

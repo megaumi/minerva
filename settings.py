@@ -152,4 +152,6 @@ LOGGING = {
     }
 }
 
+AUTH_PROFILE_MODULE = "main.userprofile"
+
 sys.path.append(os.path.join(SITE_ROOT, 'utils'))
