@@ -41,7 +41,35 @@ class Article(models.Model):
     
     def __unicode__(self):
         return u'%s: %s' % (self.magazine_issue, self.original_title)
-
+    
+    @property
+    def english_words(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((ep.words for ep in english_paragraphs))
+    @property
+    def translated_words(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((ep.translation.words for ep in english_paragraphs
+            if hasattr(ep, 'translation')))
+    @property
+    def english_chars(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((ep.chars for ep in english_paragraphs))
+    @property
+    def translated_chars(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((ep.translation.chars for ep in english_paragraphs
+            if hasattr(ep, 'translation')))
+    @property
+    def english_chars_with_spaces(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((ep.chars_with_spaces for ep in english_paragraphs))
+    @property
+    def translated_chars_with_spaces(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((ep.translation.chars_with_spaces for ep
+            in english_paragraphs if hasattr(ep, 'translation')))
+        
 
 class EnglishParagraph(models.Model):
     u'''Абзац английского текста'''

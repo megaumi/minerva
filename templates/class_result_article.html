@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>{{ article.original_title }}</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 0.18" />
+</head>
+
+<body>
+    <h3>Статистика</h3>
+    <h4>Оригинал</h4>
+    <ul>
+    <li>Слов: {{ article.english_words }}</li>
+    <li>Символов: {{ article.english_chars }}</li>
+    <li>Символов с пробелами: {{ article.english_chars_with_spaces }}</li>
+    </ul>
+    <h4>Перевод</h4>
+    <ul>
+    <li>Слов: {{ article.translated_words }}</li>
+    <li>Символов: {{ article.translated_chars }}</li>
+    <li>Символов с пробелами: {{ article.translated_chars_with_spaces }}</li>
+    </ul>
+	{% for english_p in object_list %}
+        {% if english_p.translation %}
+            <p>{{ english_p.translation.text }}</p>
+        {% else %}
+            <p><font color="grey">{{ english_p.text }}</font></p>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>
