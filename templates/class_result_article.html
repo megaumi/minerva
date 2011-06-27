@@ -10,6 +10,12 @@
 
 <body>
     <h3>Статистика</h3>
+    <h4>Общее</h4>
+    <ul>
+    <li>{{ article.compare_original_with_translation }}</li>
+    <li>Абзацев переведено: {{ article.translated_num }}</li>
+    <li>Абзацев не переведено: {{ article.not_translated_num }}</li>
+    </ul>
     <h4>Оригинал</h4>
     <ul>
     <li>Слов: {{ article.english_words }}</li>

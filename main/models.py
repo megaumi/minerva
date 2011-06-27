@@ -69,7 +69,24 @@ class Article(models.Model):
         english_paragraphs = EnglishParagraph.objects.filter(article=self)
         return sum((ep.translation.chars_with_spaces for ep
             in english_paragraphs if hasattr(ep, 'translation')))
-        
+    @property
+    def translated_num(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return sum((1 for ep in english_paragraphs if hasattr(ep, 'translation')))
+    @property
+    def not_translated_num(self):
+        english_paragraphs = EnglishParagraph.objects.filter(article=self)
+        return english_paragraphs.count() - self.translated_num
+    def compare_original_with_translation(self):
+        translated_length = self.translated_chars_with_spaces
+        original_length = float(self.english_chars_with_spaces)
+        percentage =  translated_length / original_length * 100 - 100
+        if percentage > 3:
+            return "Перевод длиннее оригинала на %d%%" % percentage 
+        elif -3 < percentage <= 3:
+            return "Перевод приблизительно равен оригиналу"
+        else:
+            return "Перевод короче оригинала на %d%%" % -percentage
 
 class EnglishParagraph(models.Model):
     u'''Абзац английского текста'''
