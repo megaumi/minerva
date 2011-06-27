@@ -79,6 +79,20 @@ def translate_article(request, article_id):
     })
     return render_to_response('translate_article.html', context)
 
+class TranslateArticleView(ListView):
+    u'''Страница для работы над статьёй'''
+    template_name = 'class_translate_article.html'
+    paginate_by = 10
+    def get_queryset(self):
+        self.article_id = self.kwargs['article_id']
+        return EnglishParagraph.objects.filter(article__id=self.article_id)
+    def get_context_data(self, **kwargs):
+        context = super(TranslateArticleView, self).get_context_data(**kwargs)
+        article = get_object_or_404(Article, pk=self.article_id)
+        context['title'] = article.original_title
+        context['new_translation_form'] = TranslatedParagraphForm()
+        return context
+
 def ajax_add_translation(request, english_paragraph_id):
     u'''Добавляет новый перевод абзаца'''
     ep = EnglishParagraph.objects.get(pk=english_paragraph_id)

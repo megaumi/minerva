@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>{{ title }}</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 0.18" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('.commentbox form').submit(function(e) {
+            alert("form submitted");
+            e.preventDefault();
+            return false;
+        });
+        $('.commentbox form input[type=submit]').click(function(e) {
+            e.preventDefault();
+            id = $(this).attr('id');
+        
+            $.post($(this).parent().attr('action'), $(this).parent().serialize(), function(data) {
+                //alert('The AJAX is done, and the server said ' + data);
+                $('#commentlist'+id).load('/get_comments/'+id+'/');
+            });
+        });
+    });
+    function on_translation_submit(id) {
+        $.ajax({
+            url: "/add_translation/"+id+"/",
+            type: "post",
+            data: $('#form'+id).serialize(),
+            success: function(data){
+                $('#translation'+id).html($('#form'+id+' textarea').val());
+                //alert('The AJAX is done, and the server said ' + data);
+            }
+        });
+    };
+    </script>
+    <style type="text/css">
+        body
+        {
+        font-family:"verdana","helvetica";
+        font-size:11px;
+        }
+        td
+        {
+        border-top:1px solid #999999;    
+        }
+    </style>
+</head>
+
+<body>
+    {% load comments %}
+    {% if is_paginated %}
+        <div class="pagination">
+        <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    <table align="center" width=75%>
+        <th>Оригинал</th>
+        <th>Перевод</th>
+        <th>Комментарии</th>
+	{% for english_p in object_list %}
+        <tr>
+        <td width=30%>{{ english_p.text }}</td>
+        <td width=30%>
+            <span id="translation{{ english_p.id }}">
+                {% if english_p.translation %}
+                    <p>{{ english_p.translation.id }}</p>
+                    <p>{{ english_p.translation.text }}</p>
+                    <p><b>{{ english_p.translation.author }}</b> - {{ english_p.translation.last_changed }}</p>
+                {% endif %}
+            </span>
+            <form id="form{{ english_p.id }}">
+                {% csrf_token %}
+                {{ new_translation_form.as_p }}
+                <button type="button" onclick="on_translation_submit({{ english_p.id }})">Сохранить</button>
+            </form>
+        </td>
+        <td>
+            <span id="commentlist{{ english_p.id }}">{% render_comment_list for english_p %}</span>
+            {% get_comment_form for english_p as form %}
+            <div class="commentbox">
+              <form id="commentform{{ english_p.id }}" action="{% comment_form_target %}" method="post">{% csrf_token %}
+                  {% for field in form %}
+                    {% if field.is_hidden %}
+                      <div>{{ field }}</div>
+                    {% else %}
+                      {% if field.errors %}{{ field.errors }}{% endif %}
+                      <p
+                        {% if field.errors %} class="error"{% endif %}
+                        {% ifequal field.name "honeypot" %} style="display:none;"{% endifequal %}>
+                        {% if field.name != 'email' and field.name != 'url' and field.name != 'name' %} 
+                            {{ field }}
+                        {% endif %}
+                      </p>
+                    {% endif %}
+                  {% endfor %}
+                  <input type="submit" name="post" value="Сохранить" id="{{ english_p.id }}"/>
+              </form>
+            </div>
+        </td>
+        </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>
