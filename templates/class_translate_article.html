@@ -35,6 +35,17 @@
             }
         });
     };
+    function show_translation_history(id) {
+        if ($('#history'+id).attr('hidden')) {
+            $('#history'+id).load('/translation_history/'+id+'/');
+            $('#history'+id).slideDown();
+            $('#history'+id).attr('hidden', '');
+        }
+        else {
+            $('#history'+id).slideUp();
+            $('#history'+id).attr('hidden', 'hidden');
+        }
+    };
     </script>
     <style type="text/css">
         body
@@ -78,9 +89,10 @@
         <td width=30%>
             <span id="translation{{ english_p.id }}">
                 {% if english_p.translation %}
-                    <p>{{ english_p.translation.id }}</p>
                     <p>{{ english_p.translation.text }}</p>
                     <p><b>{{ english_p.translation.author }}</b> - {{ english_p.translation.last_changed }}</p>
+                    <p><a href="#" onclick="show_translation_history({{ english_p.translation.id }})">История</a></p>
+                    <span id="history{{ english_p.translation.id }}" hidden="hidden"></span>
                 {% endif %}
             </span>
             <form id="form{{ english_p.id }}">

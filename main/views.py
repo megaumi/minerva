@@ -105,16 +105,18 @@ def ajax_get_comments(request, ep_id):
 def get_translation_history(request, translation_id):
     translation = get_object_or_404(TranslatedParagraph, pk=translation_id)
     available_versions = Version.objects.get_for_object(translation)
-    print len(available_versions)
     history = []
     for i, v in enumerate(available_versions):
         if not i == 0:
-            dataset = {
-                'author': User.objects.get(pk=v.get_field_dict()['author']),
-                'date': v.get_field_dict()['last_changed'],
-                'html_patch': generate_patch_html(available_versions[i-1], v, "text")
-            }
-            history.append(dataset)
+            html_patch = generate_patch_html(available_versions[i-1], v, "text")
+        else:
+            html_patch = v.get_field_dict()['text']
+        dataset = {
+            'author': User.objects.get(pk=v.get_field_dict()['author']),
+            'date': v.get_field_dict()['last_changed'],
+            'html_patch': html_patch            
+        }
+        history.append(dataset)
     return render_to_response('translation_history.html', {'history': history})
     
     

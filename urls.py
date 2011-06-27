@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.views.generic.detail import DetailView
-from django.views.generic import ListView
+from django.views.generic import ListView, RedirectView
 from main.views import ArticleCreateView, ArticleListView, IssueListView, TranslateArticleView, ArticleResultView
 from main.models import Article, MagazineIssue
 admin.autodiscover()
@@ -25,8 +25,8 @@ urlpatterns += patterns('main.views',
     url(r'^articles/(?P<issue_num>\d+)/$', ArticleListView.as_view()),
     url(r'^article/add/$', 'add_article'),
     #url(r'^article/translate/(?P<article_id>\d+)/$', 'translate_article'),
-    url(r'^article/translate/(?P<article_id>\d+)/$', TranslateArticleView.as_view()),
-    url(r'^article/result/(?P<article_id>\d+)/$', ArticleResultView.as_view()),
+    url(r'^article/(?P<article_id>\d+)/translate/$', TranslateArticleView.as_view()),
+    url(r'^article/(?P<article_id>\d+)/result/$', ArticleResultView.as_view()),
     url(r'^add_translation/(\d+)/$', 'ajax_add_translation'),
     url(r'^get_comments/(\d+)/$', 'ajax_get_comments'),
     url(r'^translation_history/(\d+)/$', 'get_translation_history'),

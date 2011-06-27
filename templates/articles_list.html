@@ -12,7 +12,7 @@
 	    <h2>Список статей FCM #{{ issue.number }}</h2>
     <ul>
         {% for article in articles_list %}
-            <li><a href="/article/translate/{{ article.id }}">{{ article.original_title }}</a></li>
+            <li><a href="/article/{{ article.id }}/translate/">{{ article.original_title }}</a></li>
         {% endfor %}
     </ul>
 </body>
